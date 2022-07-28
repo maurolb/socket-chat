@@ -16,7 +16,8 @@ socket.on('connect', () => {
     console.log('Conectado al servidor');
 
     socket.emit('joinChat', user, (res) => {
-        console.log('online users', res);
+        // console.log('online users', res);
+        usersRender(res);
     });
 });
 
@@ -30,13 +31,16 @@ socket.on('connect', () => {
 
 // Escuchar informacion
 socket.on('createMessage', (message) => {
-    console.log('Server:', message);
+    // console.log('Server:', message);
+    messageRender(message, false);
+    scrollBottom();
 });
 
 // Escuchar cambios de usuario
 // Usuario entra o sale del chat
 socket.on('onlinePeople', (people) => {
-    console.log(people);
+    // console.log(people);
+    usersRender(people);
 });
 
 // Mensajes privados

@@ -20,16 +20,20 @@ io.on('connection', (client) => {
         users.addPerson(client.id, name, room);
 
         client.broadcast.to(room).emit('onlinePeople', users.getRoomPeople(room));
+        client.broadcast.to(room).emit('createMessage', createMessage('Admin', name + ' se unió'));
+
         
         callback(users.getRoomPeople(room));
     });
 
-    client.on('createMessage', (data) => {
+    client.on('createMessage', (data, callback) => {
 
         const {name, room} = users.getPerson(client.id);
 
         const message = createMessage(name, data.message);
         client.broadcast.to(room).emit('createMessage', message);
+
+        callback(message);
     });
 
     // Mensajes privados
@@ -43,7 +47,7 @@ io.on('connection', (client) => {
     client.on('disconnect', () => {
         const {name, room} = users.removePerson(client.id);
 
-        client.broadcast.to(room).emit('createMessage', createMessage('Admin', name + ' has left the chat'));
+        client.broadcast.to(room).emit('createMessage', createMessage('Admin', name + ' abandonó el chat'));
         client.broadcast.to(room).emit('onlinePeople', users.getRoomPeople(room));
     });
 
